@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Report</title>
+  <style>
+    body { font-family: Arial; background-color: #f0f0f0; padding: 20px; text-align: center; }
+    table { margin: 20px auto; border-collapse: collapse; background: #fff; }
+    th, td { border: 1px solid #999; padding: 8px 15px; }
+    input, button { padding: 10px; font-size: 16px; margin: 10px; }
+    img { margin-top: 20px; max-width: 500px; }
+
+    @media print {
+      body { background: #fff; color: #000; }
+      form, #print-btn { display: none; }
+    }
+  </style>
+  <script>
+    function printReport() {
+      window.print();
+    }
+  </script>
+</head>
+<body>
+  <h2>Student Progress Report</h2>
+  <form method="post">
+    <input type="number" name="student_id" placeholder="Enter Student ID" required>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if result %}
+    <h3>{{ result.name }} ({{ result.id }}) - Section: {{ result.sec }}</h3>
+
+    <button id="print-btn" onclick="printReport()">🖨️ Print / Save as PDF</button>
+
+    <table>
+      <tr>
+        <th>Test</th>
+        <th>Exam Date</th>
+        <th>MAT</th>
+        <th>PHY</th>
+        <th>CHE</th>
+        <th>TOT</th>
+        <th>%</th>
+      </tr>
+      {% for row in result.report_rows %}
+      <tr>
+        <td>{{ row.Test }}</td>
+        <td>{{ row.Date }}</td>
+        <td>{{ "%.2f"|format(row.MAT) if row.MAT is number else row.MAT }}</td>
+        <td>{{ "%.2f"|format(row.PHY) if row.PHY is number else row.PHY }}</td>
+        <td>{{ "%.2f"|format(row.CHE) if row.CHE is number else row.CHE }}</td>
+        <td>{{ "%.2f"|format(row.TOT) if row.TOT is number else row.TOT }}</td>
+        <td>{{ row.PERCENT }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+
+    <img src="{{ url_for('static', filename=result.graph.split('/')[-1]) }}" alt="Performance Graph">
+  {% elif result == "Invalid ID" or result == "Student ID not found." %}
+    <p style="color:red;">{{ result }}</p>
+  {% endif %}
+</body>
+</html>
