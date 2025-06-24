@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: progressreport
+    name: Progressreport
     env: python
     buildCommand: pip install -r requirements.txt
     startCommand: python app.py
